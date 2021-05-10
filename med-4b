@@ -1,0 +1,47 @@
+clear
+clc
+
+Hnom=37285*0.6
+d=0.15748;
+D=0.3048;
+L=2.25; %from belt name = B2800
+Ks=1.2; %from Table 17-15
+N=324.63*60/2/pi;
+f=0.5123;
+Htab=2330; %from Table 17-12
+Nb=1;
+
+V = pi*d*N/60
+Lc=0.072; %from table 17-11
+Lp=L+Lc
+C=0.25*((Lp-(pi/2)*(D+d))+sqrt((Lp-(pi/2)*(D+d)).^2+2*(D-d).^2))
+phi=pi-2*asin((D-d)/(2*C))
+efphi=exp(f*phi)
+K1=0.97; %from Table 17-13
+K2=0.9; %from Table 17-14
+Ha=K1*K2*Htab
+%nd=1; %assume nd=1
+%Hd=Hnom*Ks*nd 
+%Nb_old = Hd/Ha
+Hd = Nb*Ha
+%Nb=input('Enter new nb: ');
+
+Kb=180; %from Table 17-16
+Kc=1.716; %from Table 17-16
+
+Fc=Kc*(V/2.4).^2
+deltaF=(Hd/Nb)/pi/(N/60)/d
+F1=Fc+deltaF*efphi/(efphi-1)
+F2=F1-deltaF
+Fi=(F1+F2)/2-Fc
+nf=Ha*Nb/Hnom/Ks
+Fb1=Kb/d
+Fb2=Kb/D
+T1=F1+Fb1
+T2=F1+Fb2
+
+K = 9069; %from Table 17-17
+b = 11.173; %from Table 17-17
+
+Np=((K/T1).^(-b)+(K/T2).^(-b)).^(-1)
+t=Np*Lp/3600/V
