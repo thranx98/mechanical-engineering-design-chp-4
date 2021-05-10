@@ -1,0 +1,55 @@
+clear
+clc
+
+Nb=2;
+Hnom=45000
+d=0.65;
+D=0.65;
+C=3.6
+%L=2.125; %from belt name = B2800
+
+N=400;
+f=0.5123; %always the same?
+
+
+syms Lpold
+Lpold = solve(C==0.25*((Lpold-(pi/2)*(D+d))+sqrt((Lpold-(pi/2)*(D+d)).^2+2*(D-d).^2)))
+Lpold = (13*pi)/20 + 36/5
+V = pi*d*N/60
+L=9
+Lc=0.112; %from table 17-11
+Lp=L+Lc
+phi=pi-2*asin((D-d)/(2*C))
+efphi=exp(f*phi)
+Htab=22600; %from Table 17-12
+K1=1; %from Table 17-13
+K2=1.05; %from Table 17-14
+Ha=K1*K2*Htab
+
+nd=1; %assume nd=1
+Ks=1.4; %from Table 17-15
+Hd=Hnom*Ks*nd 
+Nb_old = Hd/Ha
+%Hd = Nb*Ha
+%Ha=Hd/Nb
+Nb=input('Enter new nb: ');
+
+Kb=1226; %from Table 17-16
+Kc=5.041; %from Table 17-16
+
+Fc=Kc*(V/2.4).^2
+deltaF=(Hd/Nb)/pi/(N/60)/d
+F1=Fc+deltaF*efphi/(efphi-1)
+F2=F1-deltaF
+Fi=(F1+F2)/2-Fc
+nf=Ha*Nb/Hnom/Ks
+Fb1=Kb/d
+Fb2=Kb/D
+T1=F1+Fb1
+T2=F1+Fb2
+
+K = 26791; %from Table 17-17
+b = 11.1; %from Table 17-17
+
+Np=((K/T1).^(-b)+(K/T2).^(-b)).^(-1)
+t=Np*Lp/3600/V
